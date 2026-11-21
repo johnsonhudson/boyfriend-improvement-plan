@@ -202,7 +202,7 @@ label.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; 
 
 /* ---------- toast ---------- */
 .toast {
-  position: fixed; left: 50%; bottom: 24px; transform: translate(-50%, 20px);
+  position: fixed; left: 50%; bottom: calc(24px + env(safe-area-inset-bottom, 0px)); transform: translate(-50%, 20px);
   background: var(--ink); color: var(--bg); padding: 12px 18px; border-radius: 12px;
   font-weight: 500; opacity: 0; pointer-events: none; transition: .25s; z-index: 100; max-width: calc(100% - 32px);
 }
@@ -237,7 +237,7 @@ label.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; 
 }
 @media (max-width: 760px) {
   .app { grid-template-columns: 1fr; }
-  .nav { position: sticky; top: 0; height: auto; z-index: 10; padding: 10px 12px; gap: 8px; flex-direction: row; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); }
+  .nav { position: sticky; top: env(safe-area-inset-top, 0px); height: auto; z-index: 10; padding: 10px 12px; gap: 8px; flex-direction: row; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); }
   .brand { padding: 0; }
   .brand-name { display: none; }
   #nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; }

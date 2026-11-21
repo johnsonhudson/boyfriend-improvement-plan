@@ -41,7 +41,7 @@ Then open http://localhost:8080.
    ```
 3. On GitHub: **Settings → Pages → Build and deployment → Source: Deploy from a branch**, choose `main` and `/ (root)`, then save.
 4. After a minute it's live at `https://YOUR-USERNAME.github.io/boyfriend-improvement-plan/`.
-5. On the digital screen, open **`https://YOUR-USERNAME.github.io/boyfriend-improvement-plan/?display`** — it boots straight into display mode. Press `Esc` (or hover and click ✕) to exit, arrow keys to change slides.
+5. On the digital screen, open **`https://YOUR-USERNAME.github.io/boyfriend-improvement-plan/?display`** (or add `#display` to any link) — it boots straight into display mode. Press `Esc` (or hover and click ✕) to exit, arrow keys to change slides.
 
 ## Your data
 

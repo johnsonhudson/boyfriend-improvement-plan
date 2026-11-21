@@ -139,7 +139,7 @@
           <p class="muted" style="margin-top:6px">Small things, done often. Here's today's plan for ${esc(pName())}.</p>
         </div>
         ${days !== null ? `<div class="counter"><div class="big">${days.toLocaleString()}</div><div class="muted small">days together</div></div>`
-          : `<a class="btn" href="#settings">Add your names & start date →</a>`}
+          : `<a class="btn" href="#setup">Add your names & start date →</a>`}
       </div>
 
       <div class="grid three">
@@ -462,7 +462,7 @@
   views.connect = () => `
     <div class="page-head">
       <div><h1>Connect</h1><p>Ways to feel close over the phone — calls, voice notes, questions, and phone dates.</p></div>
-      ${state.settings.partnerPhone ? `<div class="row"><a class="btn primary" href="${esc(telHref())}">📞 Call</a><a class="btn" href="facetime:${esc((state.settings.partnerPhone || "").replace(/[^\d+]/g, ""))}">🎥 FaceTime</a><a class="btn" href="${esc(smsHref(""))}">💬 Message</a></div>` : `<a class="btn" href="#settings">Add her number for one-tap calling</a>`}
+      ${state.settings.partnerPhone ? `<div class="row"><a class="btn primary" href="${esc(telHref())}">📞 Call</a><a class="btn" href="facetime:${esc((state.settings.partnerPhone || "").replace(/[^\d+]/g, ""))}">🎥 FaceTime</a><a class="btn" href="${esc(smsHref(""))}">💬 Message</a></div>` : `<a class="btn" href="#setup">Add her number for one-tap calling</a>`}
     </div>
     <div class="grid two">
       <div class="card" style="background:var(--accent-soft);border-color:transparent">
@@ -526,7 +526,7 @@
   };
 
   // ----- Settings -----
-  views.settings = () => {
+  views.setup = () => {
     const s = state.settings;
     return `
       <div class="page-head"><div><h1>Settings</h1><p>Your data is saved in this browser only. Use export/import to move it to your display screen or another device.</p></div></div>
@@ -555,8 +555,13 @@
           <h2 style="margin-top:10px">Backup</h2>
           <div class="row">
             <button class="btn" data-action="export">⬇️ Export data</button>
+            <button class="btn" data-action="copy-backup">📋 Copy backup</button>
             <label class="btn">⬆️ Import data<input type="file" accept="application/json" data-action="import" hidden></label>
           </div>
+          <form class="stack" data-form="paste-backup" style="margin-top:6px">
+            <label class="field" for="paste-backup">Or paste a copied backup<textarea id="paste-backup" name="json" rows="2" placeholder='{"settings": …}'></textarea></label>
+            <div class="row"><button class="btn sm" type="submit">Restore from paste</button></div>
+          </form>
           <button class="btn ghost sm danger" style="align-self:flex-start;margin-top:10px" data-action="reset">Reset everything</button>
         </div>
       </div>`;
@@ -571,12 +576,21 @@
     if (v === "tone") updateTone();
   }
   function navigate() { render(); view.focus({ preventScroll: true }); window.scrollTo(0, 0); }
-  window.addEventListener("hashchange", navigate);
+  window.addEventListener("hashchange", () => { if (location.hash === "#display") startDisplay(); else navigate(); });
 
+  let themeSet = false;
   function applyTheme() {
     const t = state.settings.theme;
-    if (t === "auto") document.documentElement.removeAttribute("data-theme");
-    else document.documentElement.setAttribute("data-theme", t);
+    if (t === "auto") { if (themeSet) document.documentElement.removeAttribute("data-theme"); themeSet = false; }
+    else { document.documentElement.setAttribute("data-theme", t); themeSet = true; }
+  }
+
+  // Two-tap confirm (browser confirm() dialogs are blocked in some viewers)
+  function armed(el, label) {
+    if (el.dataset.armed === "1") return true;
+    el.dataset.armed = "1"; const old = el.textContent; el.textContent = label;
+    setTimeout(() => { el.dataset.armed = ""; el.textContent = old; }, 4000);
+    return false;
   }
 
   // ---------- events ----------
@@ -591,7 +605,7 @@
       case "display-on": startDisplay(); break;
       case "display-off": stopDisplay(); break;
 
-      case "notify-perm": Notification.requestPermission().then(render); break;
+      case "notify-perm": try { Promise.resolve(Notification.requestPermission()).then(render, () => toast("Notifications aren't available here")); } catch { toast("Notifications aren't available here"); } break;
       case "draft-day": {
         const d = +el.dataset.day;
         reminderDraftDays = reminderDraftDays.includes(d) ? reminderDraftDays.filter(x => x !== d) : [...reminderDraftDays, d].sort();
@@ -639,14 +653,15 @@
       case "q-next": qIndex = (qIndex + 1) % D.questions.length; render(); break;
       case "q-prev": qIndex = (qIndex - 1 + D.questions.length) % D.questions.length; render(); break;
 
-      case "restart-plan": if (confirm("Restart the plan from week 1 and clear challenge checkmarks?")) { state.planStart = dateKey(); state.planTasks = {}; rerender(); } break;
+      case "restart-plan": if (armed(el, "Tap again to restart")) { state.planStart = dateKey(); state.planTasks = {}; rerender(); } break;
 
       case "export": {
         const blob = new Blob([JSON.stringify(state, null, 2)], { type: "application/json" });
         const link = document.createElement("a"); link.href = URL.createObjectURL(blob); link.download = `boyfriend-plan-backup-${dateKey()}.json`; link.click();
         URL.revokeObjectURL(link.href); break;
       }
-      case "reset": if (confirm("Erase all your data on this device? This can't be undone.")) { state = defaults(); save(); applyTheme(); location.hash = "#home"; render(); } break;
+      case "copy-backup": copy(JSON.stringify(state)); break;
+      case "reset": if (armed(el, "Tap again to erase everything")) { state = defaults(); save(); applyTheme(); location.hash = "#home"; render(); } break;
     }
   });
 
@@ -693,6 +708,10 @@
         state.compliments.unshift({ id: uid(), text: f.text.trim(), reaction: (f.reaction || "").trim(), rating: draftRating, date: dateKey() });
         draftRating = 4; toast("Into the jar 🫙"); break;
       case "favorite": state.favorites.push({ id: uid(), category: f.category, value: f.value.trim(), note: (f.note || "").trim() }); toast("Saved ⭐"); break;
+      case "paste-backup":
+        try { state = Object.assign(defaults(), JSON.parse(f.json)); applyTheme(); toast("Data restored ✓"); }
+        catch { toast("That backup text couldn't be read. Copy it again and paste the whole thing."); return; }
+        break;
       case "settings":
         state.settings = { ...state.settings, ...f, displaySeconds: Math.max(5, Math.min(120, +f.displaySeconds || 15)) };
         applyTheme(); toast("Settings saved"); break;
@@ -784,7 +803,8 @@
     $("#display").hidden = true;
     clearInterval(slideTimer); clearInterval(clockTimer);
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
-    if (new URLSearchParams(location.search).has("display")) history.replaceState(null, "", location.pathname + location.hash);
+    if (location.hash === "#display") location.hash = "#home";
+    else if (new URLSearchParams(location.search).has("display")) history.replaceState(null, "", location.pathname + location.hash);
     render();
   }
   document.addEventListener("keydown", e => {
@@ -798,5 +818,5 @@
   applyTheme();
   render();
   checkReminders();
-  if (new URLSearchParams(location.search).has("display")) startDisplay();
+  if (new URLSearchParams(location.search).has("display") || location.hash === "#display") startDisplay();
 })();
