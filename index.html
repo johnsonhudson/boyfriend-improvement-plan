@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Boyfriend Improvement Plan</title>
   <meta name="description" content="A relationship betterment app: reminders, tone help, favorites, compliment jar, reassurance, daily texts and a growth plan.">
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💞</text></svg>">
@@ -36,6 +36,10 @@
       </nav>
       <button class="btn display-btn" data-action="display-on">🖥️ Display mode</button>
     </aside>
+    <header class="m-head">
+      <span class="brand-mark">💞</span><span class="m-title" id="m-title">Today</span>
+      <button class="m-icon" data-action="display-on" aria-label="Display mode">🖥️</button>
+    </header>
     <main id="view" tabindex="-1"></main>
   </div>
 
@@ -43,6 +47,27 @@
     <button class="display-exit" data-action="display-off" aria-label="Exit display mode">✕</button>
     <div class="display-inner" id="display-inner"></div>
     <div class="display-dots" id="display-dots"></div>
+  </div>
+
+  <nav class="tabbar" id="tabbar" aria-label="Main">
+    <a href="#home" data-view="home"><span>🏠</span>Today</a>
+    <a href="#texts" data-view="texts"><span>📱</span>Texts</a>
+    <a href="#tone" data-view="tone"><span>💬</span>Tone</a>
+    <a href="#jar" data-view="jar"><span>🫙</span>Jar</a>
+    <button type="button" data-action="more" id="more-btn"><span>☰</span>More</button>
+  </nav>
+  <div class="sheet-backdrop" id="sheet" hidden data-action="more-close">
+    <div class="sheet" role="dialog" aria-label="More">
+      <div class="sheet-grip"></div>
+      <div class="sheet-grid">
+        <a href="#reminders" data-view="reminders"><span>⏰</span>Reminders</a>
+        <a href="#reassure" data-view="reassure"><span>🤍</span>Reassurance</a>
+        <a href="#favorites" data-view="favorites"><span>⭐</span>Favorites</a>
+        <a href="#connect" data-view="connect"><span>📞</span>Connect</a>
+        <a href="#plan" data-view="plan"><span>📈</span>Growth Plan</a>
+        <a href="#setup" data-view="setup"><span>⚙️</span>Settings</a>
+      </div>
+    </div>
   </div>
 
   <div id="toast" class="toast" role="status" aria-live="polite"></div>

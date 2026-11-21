@@ -235,18 +235,105 @@ label.field { display: flex; flex-direction: column; gap: 6px; font-size: 13px; 
 @media (max-width: 900px) {
   .grid.three { grid-template-columns: 1fr 1fr; }
 }
+/* phone-only pieces, hidden on larger screens */
+.m-head, .tabbar, .sheet-backdrop { display: none; }
+.app > main { min-width: 0; }
+
 @media (max-width: 760px) {
-  .app { grid-template-columns: 1fr; }
-  .nav { position: sticky; top: env(safe-area-inset-top, 0px); height: auto; z-index: 10; padding: 10px 12px; gap: 8px; flex-direction: row; align-items: center; border-right: 0; border-bottom: 1px solid var(--line); }
-  .brand { padding: 0; }
-  .brand-name { display: none; }
-  #nav { flex-direction: row; overflow-x: auto; scrollbar-width: none; }
-  #nav a { white-space: nowrap; padding: 7px 10px; font-size: 13px; }
-  .display-btn { width: auto; padding: 7px 10px; font-size: 0; }
-  .display-btn::first-letter { font-size: 16px; }
-  main { padding: 22px 16px 80px; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+  .app { display: block; }
+  .nav { display: none; }
+
+  /* top bar */
+  .m-head {
+    display: flex; align-items: center; gap: 10px;
+    position: sticky; top: 0; z-index: 20;
+    padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--surface) 88%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
+    border-bottom: 1px solid var(--line);
+  }
+  .m-head .brand-mark { font-size: 22px; }
+  .m-title { flex: 1; font-family: Fraunces, Georgia, serif; font-weight: 700; font-size: 19px; }
+  .m-icon { border: 0; background: var(--surface-2); width: 38px; height: 38px; border-radius: 50%; font-size: 17px; cursor: pointer; }
+
+  /* bottom tab bar */
+  .tabbar {
+    display: grid; grid-template-columns: repeat(5, 1fr);
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 30;
+    padding: 6px max(8px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(8px, env(safe-area-inset-left, 0px));
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
+    border-top: 1px solid var(--line);
+  }
+  .tabbar a, .tabbar button {
+    display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 6px 0 4px;
+    border: 0; background: none; color: var(--ink-3); text-decoration: none; font-size: 11px; font-weight: 600; cursor: pointer;
+  }
+  .tabbar span { font-size: 21px; line-height: 1.1; filter: grayscale(.6); opacity: .75; }
+  .tabbar .active { color: var(--accent); }
+  .tabbar .active span { filter: none; opacity: 1; }
+
+  /* "More" sheet */
+  .sheet-backdrop { display: block; position: fixed; inset: 0; z-index: 40; background: rgba(20, 8, 14, .45); }
+  .sheet-backdrop[hidden] { display: none; }
+  .sheet {
+    position: absolute; left: 0; right: 0; bottom: 0; background: var(--surface); border-radius: 22px 22px 0 0;
+    padding: 10px max(16px, env(safe-area-inset-right, 0px)) calc(20px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px));
+    box-shadow: 0 -10px 40px rgba(0,0,0,.2); animation: sheet-up .22s ease;
+  }
+  .sheet-grip { width: 40px; height: 5px; border-radius: 9px; background: var(--line); margin: 0 auto 14px; }
+  .sheet-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .sheet-grid a, .sheet-grid button {
+    display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 14px 6px; border-radius: 14px;
+    background: var(--surface-2); border: 1px solid transparent; color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 600; cursor: pointer;
+  }
+  .sheet-grid span { font-size: 24px; }
+  .sheet-grid .active { border-color: var(--accent); background: var(--accent-soft); color: var(--accent); }
+
+  /* content */
+  main { padding: 18px max(16px, env(safe-area-inset-right, 0px)) calc(96px + env(safe-area-inset-bottom, 0px)) max(16px, env(safe-area-inset-left, 0px)); }
+  .page-head { margin-bottom: 16px; }
+  .page-head h1 { display: none; }  /* title lives in the top bar */
+  .page-head p { margin-top: 0; font-size: 14px; }
+  .page-head > *:not(div:first-child) { width: 100%; }
+  .grid { gap: 12px; }
   .grid.two, .grid.three { grid-template-columns: 1fr; }
   .span-2 { grid-column: auto; }
-  .counter { text-align: left; }
-  h1, .hero h1 { font-size: 26px; }
+  .card { padding: 16px; border-radius: 18px; }
+  .quote { font-size: 18px; }
+  .hero { margin-bottom: 16px; gap: 12px; }
+  .hero h1, h1 { font-size: 26px; }
+  .counter { text-align: left; display: flex; align-items: baseline; gap: 8px; }
+  .counter .big { font-size: 30px; }
+
+  /* comfortable touch targets; 16px inputs stop iOS from zooming */
+  input[type=text], input[type=tel], input[type=date], input[type=time], input[type=number], select, textarea { font-size: 16px; min-height: 44px; }
+  .btn { min-height: 40px; padding: 9px 14px; }
+  .btn.sm { min-height: 36px; padding: 7px 12px; }
+  .chip { padding: 8px 13px; font-size: 14px; }
+  .chips { gap: 8px; }
+  .check { padding: 10px 0; }
+  .check input { width: 22px; height: 22px; }
+  .hearts button { font-size: 22px; padding: 2px; }
+  .day-chip { width: auto; flex: 1; min-width: 36px; }
+  .list-item { flex-wrap: wrap; }
+  .list-item .grow { flex-basis: 60%; }
+  .fav-grid { grid-template-columns: 1fr; gap: 12px; }
+  .weeks { grid-template-columns: 1fr 1fr; }
+  .form-row { grid-template-columns: 1fr 1fr; }
+  .form-row > * { grid-column: auto !important; }
+  .form-row > .btn { grid-column: 1 / -1 !important; }
+  [data-form="favorite"].form-row { grid-template-columns: 1fr; }
+
+  .toast { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+  .display { padding: calc(4vh + env(safe-area-inset-top, 0px)) 6vw calc(4vh + env(safe-area-inset-bottom, 0px)); }
+  .display-exit { opacity: 1; top: calc(12px + env(safe-area-inset-top, 0px)); }
 }
+@media (max-width: 380px) {
+  .sheet-grid { grid-template-columns: repeat(2, 1fr); }
+  .form-row { grid-template-columns: 1fr; }
+}
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+@media (prefers-reduced-motion: reduce) { .sheet, .display-inner { animation: none !important; } }

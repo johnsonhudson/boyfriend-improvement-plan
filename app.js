@@ -572,7 +572,12 @@
   function render() {
     const v = current();
     view.innerHTML = views[v]();
-    document.querySelectorAll("#nav a").forEach(a => a.classList.toggle("active", a.dataset.view === v));
+    document.querySelectorAll("#nav a, #tabbar a, .sheet-grid a").forEach(a => a.classList.toggle("active", a.dataset.view === v));
+    const inMore = !document.querySelector(`#tabbar a[data-view="${v}"]`);
+    $("#more-btn").classList.toggle("active", inMore);
+    const navLink = document.querySelector(`#nav a[data-view="${v}"]`);
+    $("#m-title").textContent = navLink ? navLink.lastChild.textContent.trim() : "";
+    $("#sheet").hidden = true;
     if (v === "tone") updateTone();
   }
   function navigate() { render(); view.focus({ preventScroll: true }); window.scrollTo(0, 0); }
@@ -602,7 +607,9 @@
 
     switch (a) {
       case "copy": copy(el.dataset.text); break;
-      case "display-on": startDisplay(); break;
+      case "more": $("#sheet").hidden = !$("#sheet").hidden; break;
+      case "more-close": if (e.target === el || e.target.closest("a")) $("#sheet").hidden = true; break;
+      case "display-on": $("#sheet").hidden = true; startDisplay(); break;
       case "display-off": stopDisplay(); break;
 
       case "notify-perm": try { Promise.resolve(Notification.requestPermission()).then(render, () => toast("Notifications aren't available here")); } catch { toast("Notifications aren't available here"); } break;
