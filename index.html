@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boyfriend Improvement Plan</title>
+  <meta name="description" content="A relationship betterment app: reminders, tone help, favorites, compliment jar, reassurance, daily texts and a growth plan.">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💞</text></svg>">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="apple-touch-icon.png">
+  <meta name="theme-color" content="#d94f70">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BF Plan">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <aside class="nav">
+      <div class="brand"><span class="brand-mark">💞</span><span class="brand-name">Boyfriend<br>Improvement Plan</span></div>
+      <nav id="nav">
+        <a href="#home" data-view="home"><span>🏠</span>Today</a>
+        <a href="#reminders" data-view="reminders"><span>⏰</span>Reminders</a>
+        <a href="#tone" data-view="tone"><span>💬</span>Tone Helper</a>
+        <a href="#texts" data-view="texts"><span>📱</span>Daily Texts</a>
+        <a href="#reassure" data-view="reassure"><span>🤍</span>Reassurance</a>
+        <a href="#jar" data-view="jar"><span>🫙</span>Compliment Jar</a>
+        <a href="#favorites" data-view="favorites"><span>⭐</span>Favorites</a>
+        <a href="#connect" data-view="connect"><span>📞</span>Connect</a>
+        <a href="#plan" data-view="plan"><span>📈</span>Growth Plan</a>
+        <a href="#settings" data-view="settings"><span>⚙️</span>Settings</a>
+      </nav>
+      <button class="btn display-btn" data-action="display-on">🖥️ Display mode</button>
+    </aside>
+    <main id="view" tabindex="-1"></main>
+  </div>
+
+  <div id="display" class="display" hidden>
+    <button class="display-exit" data-action="display-off" aria-label="Exit display mode">✕</button>
+    <div class="display-inner" id="display-inner"></div>
+    <div class="display-dots" id="display-dots"></div>
+  </div>
+
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+  <script src="data.js"></script>
+  <script src="tone.js"></script>
+  <script src="app.js"></script>
+  <script>if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});</script>
+</body>
+</html>

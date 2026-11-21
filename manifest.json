@@ -1,0 +1,13 @@
+{
+  "name": "Boyfriend Improvement Plan",
+  "short_name": "BF Plan",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#161013",
+  "theme_color": "#d94f70",
+  "icons": [
+    { "src": "icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ]
+}
